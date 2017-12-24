@@ -1,0 +1,4 @@
+- name: Install host dependencies
+  hosts: group_host
+  connection: local
+  tasks:

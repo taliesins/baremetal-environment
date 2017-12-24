@@ -7,3 +7,4 @@
 .chef/encrypted_data_bag_secret
 /id_rsa
 /id_rsa.pub
+/ansible/inventory/vagrant_ansible_inventory
