@@ -85,12 +85,7 @@ Vagrant.configure("2") do |config|
   else
     abort("Unknown provider: #{provider}")
   end
-
-  chef_berkshelf_path = "chef/Berksfile"
-  chef_cookbook_path = "chef/cookbooks"
-  chef_cookbook_role_path = "chef/roles"
-  chef_cookbook_databags_path = "chef/data_bags"
-
+  
   ansible_environment_state_path = "ansible/"
   if ENV["VAGRANT_DOTFILE_PATH"]
     ansible_environment_state_path = "#{ENV["VAGRANT_DOTFILE_PATH"]}/provisioners/ansible/".gsub("\\","/")
@@ -129,11 +124,6 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  unless Vagrant.has_plugin?('vagrant-berkshelf')
-    system('vagrant plugin install vagrant-berkshelf') || exit!
-    exit system('vagrant', *ARGV)
-  end
-
   # unless Vagrant.has_plugin?('vagrant-windows-domain')
   #   system('vagrant plugin install vagrant-windows-domain') || exit!
   #   exit system('vagrant', *ARGV)
@@ -145,15 +135,10 @@ Vagrant.configure("2") do |config|
   # end
 
   raise "rsync not in path" if which("rsync").nil?
-  raise "chef not in path" if which("chef").nil?
-  raise "berks not in path" if which("berks").nil?
   raise "ansible not in path" if which("rsync").nil?
 
   #Allow Rsync to work on windows
   ENV["VAGRANT_DETECTED_OS"] = ENV["VAGRANT_DETECTED_OS"].to_s + " cygwin"
-
-  #config.berkshelf.enabled = true
-  config.berkshelf.berksfile_path = chef_berkshelf_path
 
   config.winrm.username = vagrant_username
   config.winrm.password = vagrant_password
@@ -173,12 +158,6 @@ Vagrant.configure("2") do |config|
 
   hook_options = {
     :config => config,
-    :chef => { 
-      :chef_berkshelf_path => chef_berkshelf_path,
-      :chef_cookbook_path => chef_cookbook_path,
-      :chef_cookbook_role_path => chef_cookbook_role_path,
-      :chef_cookbook_databags_path => chef_cookbook_databags_path,
-    },
     :ansible => {
       :ansible_inventory_path => ansible_inventory_path,
       :ansible_inventory_template_path => ansible_inventory_template_path,
@@ -226,16 +205,6 @@ Vagrant.configure("2") do |config|
         vss: true
       }
     end
-
-   # digital_rebar.vm.provision :chef_solo do |chef|
-   #   chef.node_name = digital_rebar.vm.hostname
-   #   chef.cookbooks_path = chef_cookbook_path
-   #   chef.roles_path = chef_cookbook_role_path
-   #   chef.data_bags_path = chef_cookbook_databags_path
-   #   chef.add_recipe 'role-digitalrebar'
-   #   chef.json = {  
-   #   }
-   # end
 
     digital_rebar.vm.provision :ansible do |ansible|	  
       ansible.config_file = ansible_config_path
