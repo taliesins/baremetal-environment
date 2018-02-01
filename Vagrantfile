@@ -33,15 +33,21 @@ def which(cmd)
   return nil
 end
 
+def create_ansible_config(hook_options)
+  File.write(hook_options[:ansible][:ansible_config_path], TemplateRenderer.render(File.read(hook_options[:ansible][:ansible_config_template_path]), hook_options))
+end
+
 def create_ansible_inventory(hook_options)
   File.write(hook_options[:ansible][:ansible_inventory_path], TemplateRenderer.render(File.read(hook_options[:ansible][:ansible_inventory_template_path]), hook_options))
 end
 
 def before(hook_options)
+  create_ansible_config(hook_options)
   create_ansible_inventory(hook_options)
 end
 
 def after(hook_options)
+  
 end
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
@@ -65,6 +71,10 @@ Vagrant.configure("2") do |config|
   vagrant_username = ENV['vagrant_username'] || 'vagrant'
   vagrant_password = ENV['vagrant_password'] || 'vagrant'
   vagrant_network = ENV['vagrant_network'] || 'Port1'
+
+  vagrant_proxy_http = ENV['vagrant_proxy_http'] || 'http://192.168.0.2:3128/'
+  vagrant_proxy_https = ENV['vagrant_proxy_https'] || 'http://192.168.0.2:3128/'
+  vagrant_no_proxy = ENV['vagrant_no_proxy'] || 'localhost,127.0.0.1'
 
   ubuntu_box_name = "ubuntu"
   ubuntu_box_url = "hyperv_ubuntu-16.04_baremetal.box"
@@ -98,6 +108,7 @@ Vagrant.configure("2") do |config|
   FileUtils.mkdir_p(dir) unless File.directory?(dir)
   
   ansible_inventory_template_path = "ansible/vagrant_ansible_inventory.erb"
+  ansible_config_template_path = "ansible/ansible.cfg.erb"
   ansible_playbook_path = "ansible/playbook.yml"
   ansible_config_path = "ansible/ansible.cfg"
   ansible_galaxy_role_path = "ansible/requirements.yml"
@@ -134,8 +145,18 @@ Vagrant.configure("2") do |config|
   #   exit system('vagrant', *ARGV)
   # end
 
+  # unless Vagrant.has_plugin?('vagrant-proxyconf')
+  #   system('vagrant plugin install vagrant-proxyconf') || exit!
+  #   exit system('vagrant', *ARGV)
+  # end
+
+  # unless Vagrant.has_plugin?('vagrant-cachier')
+  #   system('vagrant plugin install vagrant-cachier') || exit!
+  #   exit system('vagrant', *ARGV)
+  # end
+  
   raise "rsync not in path" if which("rsync").nil?
-  raise "ansible not in path" if which("rsync").nil?
+  raise "ansible not in path" if which("ansible").nil?
 
   #Allow Rsync to work on windows
   ENV["VAGRANT_DETECTED_OS"] = ENV["VAGRANT_DETECTED_OS"].to_s + " cygwin"
@@ -156,6 +177,13 @@ Vagrant.configure("2") do |config|
   config.winrm.retry_limit = 6
   config.winrm.timeout = 120
 
+  if Vagrant.has_plugin?("vagrant-proxyconf")
+    config.proxy.ftp      = vagrant_proxy_ftp
+    config.proxy.http     = vagrant_proxy_http
+    config.proxy.https    = vagrant_proxy_https
+    config.proxy.no_proxy = vagrant_no_proxy
+  end
+
   hook_options = {
     :config => config,
     :ansible => {
@@ -163,6 +191,7 @@ Vagrant.configure("2") do |config|
       :ansible_inventory_template_path => ansible_inventory_template_path,
       :ansible_playbook_path => ansible_playbook_path,
       :ansible_config_path => ansible_config_path,
+      :ansible_config_template_path => ansible_config_template_path,
       :ansible_galaxy_role_path => ansible_galaxy_role_path,
       :ansible_galaxy_roles_path => ansible_galaxy_roles_path,
       :ansible_cygpath_private_key_path => get_cygpath(Array(config.ssh.private_key_path)[0]),
@@ -173,7 +202,7 @@ Vagrant.configure("2") do |config|
   before(hook_options)
 
   config.vm.define "digitalrebar" do |digital_rebar|
-    digital_rebar.vm.hostname = "digital-rebar"
+    digital_rebar.vm.hostname = "digitalrebar"
     digital_rebar.vm.guest = :ubuntu
     digital_rebar.vm.box = ubuntu_box_name
     digital_rebar.vm.box_url = ubuntu_box_url

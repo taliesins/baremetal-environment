@@ -4,4 +4,4 @@
 - hosts: all
   gather_facts: no
   
-- include: playbook-role-digitalrebar.yml
+- include: playbook-digital-rebar.yml

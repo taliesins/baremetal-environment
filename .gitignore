@@ -8,3 +8,8 @@
 /id_rsa
 /id_rsa.pub
 /ansible/inventory/vagrant_ansible_inventory
+/ansible/ansible.cfg
+/ansible/ansible/ansible.cfg
+/ansible/playbook.retry
+/ansible/roles/mrlesmithjr.digital-rebar
+/.vagrant

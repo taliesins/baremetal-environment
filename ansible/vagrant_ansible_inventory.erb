@@ -1,12 +1,12 @@
-digital-rebar
+digitalrebar
 
 [all:vars]
 ansible_ssh_port=22 
-ansible_ssh_user='#{ssh_username}' 
-ansible_ssh_private_key_file='#{ansible.ansible_cygpath_private_key_path}'
-environment_state_path='#{ansible.ansible_cygpath_ansible_environment_state_path}'
+ansible_ssh_user='<%=config.ssh.username%>' 
+ansible_ssh_private_key_file='<%=ansible[:ansible_cygpath_private_key_path]%>'
+environment_state_path='<%=ansible[:ansible_cygpath_ansible_environment_state_path]%>'
 
 [group_digitalrebar]
-digital-rebar
+digitalrebar
 
 [group_digitalrebar:vars]

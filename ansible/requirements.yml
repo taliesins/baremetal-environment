@@ -1,3 +1,1 @@
-- name: role-digitalrebar
-  src: https://github.com/taliesins/digitalrebar
-  version: origin/NewCentos
+- src: mrlesmithjr.digital-rebar

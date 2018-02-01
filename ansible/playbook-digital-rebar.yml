@@ -1,0 +1,5 @@
+---
+- name: Configure digital rebar admin node
+  hosts: group_digitalrebar
+  roles:
+    - mrlesmithjr.digital-rebar
