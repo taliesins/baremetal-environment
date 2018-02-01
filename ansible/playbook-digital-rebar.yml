@@ -1,5 +1,16 @@
 ---
+
+- name: Configure digital rebar admin node pre-requisites
+  hosts: group_digitalrebar
+  tasks:
+    - apt:
+        name: unzip
+      become: true
+
+
 - name: Configure digital rebar admin node
   hosts: group_digitalrebar
   roles:
     - mrlesmithjr.digital-rebar
+  vars:
+    digital_rebar_sha256: "36d6f0c28c1280fb3b952c23cf138f0cbe7feb1fabdff85ef4f1187c3e780f2a"
