@@ -67,21 +67,21 @@ Vagrant.configure("2") do |config|
   vagrant_network = ENV['vagrant_network'] || 'Port1'
 
   ubuntu_box_name = "ubuntu"
-  ubuntu_box_url = "hyperv_ubuntu-16.04_chef.box"
+  ubuntu_box_url = "hyperv_ubuntu-16.04_baremetal.box"
 
   case "#{provider}"
   when 'vsphere'
     ubuntu_box_name = "vsphere_dummy"
     ubuntu_box_url = "./vsphere_dummy.box"
   when 'vmware'
-    ubuntu_box_name = "vmware_ubuntu-16.04_chef"
-    ubuntu_box_url = "./vmware_ubuntu-16.04_chef.box"
+    ubuntu_box_name = "vmware_ubuntu-16.04_baremetal"
+    ubuntu_box_url = "./vmware_ubuntu-16.04_baremetal.box"
   when 'virtualbox'
-    ubuntu_box_name = "virtualbox_ubuntu-16.04_chef"
-    ubuntu_box_url = "./virtualbox_ubuntu-16.04_chef.box"
+    ubuntu_box_name = "virtualbox_ubuntu-16.04_baremetal"
+    ubuntu_box_url = "./virtualbox_ubuntu-16.04_baremetal.box"
   when 'hyperv'
     ubuntu_box_name = "ubuntu"
-    ubuntu_box_url = "./hyperv_ubuntu-16.04_chef.box"    
+    ubuntu_box_url = "./hyperv_ubuntu-16.04_baremetal.box"
   else
     abort("Unknown provider: #{provider}")
   end
@@ -152,7 +152,7 @@ Vagrant.configure("2") do |config|
   #Allow Rsync to work on windows
   ENV["VAGRANT_DETECTED_OS"] = ENV["VAGRANT_DETECTED_OS"].to_s + " cygwin"
 
-  config.berkshelf.enabled = true
+  #config.berkshelf.enabled = true
   config.berkshelf.berksfile_path = chef_berkshelf_path
 
   config.winrm.username = vagrant_username
