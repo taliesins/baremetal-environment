@@ -235,6 +235,9 @@ Vagrant.configure("2") do |config|
       }
     end
 
+    #Update DHCP server with new hostname
+    digital_rebar.vm.provision "shell", inline: "service networking restart", run: "always"
+
     digital_rebar.vm.provision :ansible do |ansible|	  
       ansible.config_file = ansible_config_path
       ansible.galaxy_role_file = ansible_galaxy_role_path
