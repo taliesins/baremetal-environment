@@ -3,8 +3,9 @@
 - name: Configure digital rebar admin node pre-requisites
   hosts: group_digitalrebar
   tasks:
-    - apt:
-        name: unzip
+    - apt: name={{ item }} state=present update_cache=yes
+      with_items:
+       - unzip
       become: true
 
 

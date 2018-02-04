@@ -70,7 +70,8 @@ Vagrant.configure("2") do |config|
   # Vagrant environment settings 
   vagrant_username = ENV['vagrant_username'] || 'vagrant'
   vagrant_password = ENV['vagrant_password'] || 'vagrant'
-  vagrant_network = ENV['vagrant_network'] || 'Port1'
+  vagrant_man_network = ENV['vagrant_man_network'] || 'Port1'
+  vagrant_lan_network = ENV['vagrant_lan_network'] || 'virtual'
 
   vagrant_proxy_http = ENV['vagrant_proxy_http'] || 'http://192.168.0.2:3128/'
   vagrant_proxy_https = ENV['vagrant_proxy_https'] || 'http://192.168.0.2:3128/'
@@ -213,10 +214,11 @@ Vagrant.configure("2") do |config|
 
     digital_rebar.vm.communicator = 'ssh'
 
-    # Create a public network, which generally matched to bridged network.
-    # Bridged networks make the machine appear as another physical device on
-    # your network.
-    digital_rebar.vm.network "public_network", bridge: vagrant_network
+    #MAN network - where digital rebar provisioner gui is accessable https://host_ip:8092
+    digital_rebar.vm.network "public_network", bridge: vagrant_man_network
+    
+    #Virtual network - where digital rebar provisioner will manage network booting
+    digital_rebar.vm.network "public_network", bridge: vagrant_lan_network, auto_config: false
 
     digital_rebar.vm.provider "hyperv" do |hyperv|
       hyperv.vmname = digital_rebar.vm.hostname
@@ -236,7 +238,7 @@ Vagrant.configure("2") do |config|
     end
 
     #Update DHCP server with new hostname
-    digital_rebar.vm.provision "shell", inline: "service networking restart", run: "always"
+    digital_rebar.vm.provision "shell", inline: "ifconfig eth1 172.16.0.1 netmask 255.255.0.0 up && service networking restart", run: "always"
 
     digital_rebar.vm.provision :ansible do |ansible|	  
       ansible.config_file = ansible_config_path
