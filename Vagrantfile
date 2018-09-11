@@ -78,21 +78,21 @@ Vagrant.configure("2") do |config|
   vagrant_no_proxy = ENV['vagrant_no_proxy'] || 'localhost,127.0.0.1'
 
   ubuntu_box_name = "ubuntu"
-  ubuntu_box_url = "hyperv_ubuntu-16.04_baremetal.box"
+  ubuntu_box_url = "hyperv_ubuntu-18.04_baremetal.box"
 
   case "#{provider}"
   when 'vsphere'
     ubuntu_box_name = "vsphere_dummy"
     ubuntu_box_url = "./vsphere_dummy.box"
   when 'vmware'
-    ubuntu_box_name = "vmware_ubuntu-16.04_baremetal"
-    ubuntu_box_url = "./vmware_ubuntu-16.04_baremetal.box"
+    ubuntu_box_name = "vmware_ubuntu-18.04_baremetal"
+    ubuntu_box_url = "./vmware_ubuntu-18.04_baremetal.box"
   when 'virtualbox'
-    ubuntu_box_name = "virtualbox_ubuntu-16.04_baremetal"
-    ubuntu_box_url = "./virtualbox_ubuntu-16.04_baremetal.box"
+    ubuntu_box_name = "virtualbox_ubuntu-18.04_baremetal"
+    ubuntu_box_url = "./virtualbox_ubuntu-18.04_baremetal.box"
   when 'hyperv'
     ubuntu_box_name = "ubuntu"
-    ubuntu_box_url = "./hyperv_ubuntu-16.04_baremetal.box"
+    ubuntu_box_url = "./hyperv_ubuntu-18.04_baremetal.box"
   else
     abort("Unknown provider: #{provider}")
   end
@@ -197,6 +197,8 @@ Vagrant.configure("2") do |config|
       :ansible_galaxy_roles_path => ansible_galaxy_roles_path,
       :ansible_cygpath_private_key_path => get_cygpath(Array(config.ssh.private_key_path)[0]),
       :ansible_cygpath_ansible_environment_state_path => get_cygpath(ansible_environment_state_path),
+      :ansible_provision_api_user => vagrant_username,
+      :ansible_provision_api_password => vagrant_password,
     }
   }
 
@@ -215,18 +217,18 @@ Vagrant.configure("2") do |config|
     digital_rebar.vm.communicator = 'ssh'
 
     #MAN network - where digital rebar provisioner gui is accessable https://host_ip:8092
-    digital_rebar.vm.network "public_network", bridge: vagrant_man_network
+    digital_rebar.vm.network :public_network, bridge: vagrant_man_network
     
     #Virtual network - where digital rebar provisioner will manage network booting
-    digital_rebar.vm.network "public_network", bridge: vagrant_lan_network, auto_config: false
+    digital_rebar.vm.network :public_network, bridge: vagrant_lan_network, ip: "172.16.0.1", netmask: "24"
 
     digital_rebar.vm.provider "hyperv" do |hyperv|
       hyperv.vmname = digital_rebar.vm.hostname
       hyperv.cpus = 4
       hyperv.memory = 8192
       hyperv.enable_virtualization_extensions = true
-      hyperv.auto_start_action = :StartIfRunning
-      hyperv.auto_stop_action = :Save
+      hyperv.auto_start_action = "StartIfRunning"
+      hyperv.auto_stop_action = "Save"
       hyperv.vm_integration_services = {
         guest_service_interface: true,
         heartbeat: true,
@@ -238,7 +240,7 @@ Vagrant.configure("2") do |config|
     end
 
     #Update DHCP server with new hostname
-    digital_rebar.vm.provision "shell", inline: "ifconfig eth1 172.16.0.1 netmask 255.255.0.0 up && service networking restart", run: "always"
+    digital_rebar.vm.provision "shell", inline: "apt-get -y install python-minimal", run: "always"
 
     digital_rebar.vm.provision :ansible do |ansible|	  
       ansible.config_file = ansible_config_path

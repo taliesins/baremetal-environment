@@ -5,8 +5,13 @@
   tasks:
     - apt: name={{ item }} state=present update_cache=yes
       with_items:
-       - unzip
+        - unzip
+        - p7zip-full
+        - bsdtar
+        - jq
+        - git
       become: true
+
 
 
 - name: Configure digital rebar admin node
@@ -14,7 +19,8 @@
   roles:
     - mrlesmithjr.digital-rebar
   vars:
-    digital_rebar_sha256: "fe338b28ce3b1df4af0b5426bfc0cb395601fff10ca3c6b1886e207a2282be4a"
+    digital_rebar_version: "tip"
+    digital_rebar_sha256: "d386229b2508bc4c1b0f629b9e60ef2f289ecab60aba744bc4a51420318dc57f"
     digital_rebar_config:
       sections:
         bootenvs:
@@ -2121,3 +2127,53 @@
             Meta: {}
             ReadOnly: false
             Validated: false
+
+- name: Configure DR Provision preferences
+  hosts: group_digitalrebar
+  tasks:
+    - copy:
+      content: '{"Meta":{},"Name":"{{ item.key }}","Val":"{{ item.value }}"}'
+      dest: "/var/lib/dr-provision/digitalrebar/preferences/{{ item.key }}.json"
+      with_dict: "{{ provision_preferences }}"
+      notify: restart dr-provision
+
+- name: Configure DR Provision API user
+  hosts: group_digitalrebar
+  become: yes
+  tasks:
+    - shell: "drpcli users create {{ provision_api_user }}"
+      args:
+        creates: "/var/lib/dr-provision/digitalrebar/users/{{ provision_api_user }}.json"
+
+- name: Update DR Provision API password
+  hosts: group_digitalrebar
+  tasks:
+    - shell: "drpcli -U {{ provision_api_user }} -P \"{{ provision_api_password }}\" prefs list >/dev/null 2>&1 && exit 0 || drpcli users password {{ provision_api_user }} \"{{ provision_api_password }}\" && exit 114"
+      register: provision_password_update
+      changed_when: provision_password_update.rc == 114
+      failed_when: provision_password_update.rc != 114 and provision_password_update.rc != 0
+ 
+- name: Update shell environment with DR Provision API credentials
+  hosts: group_digitalrebar
+  become: yes
+  tasks:
+    - copy:
+        content: "#!/bin/bash\nexport RS_KEY=\"{{ provision_api_user }}:{{ provision_api_password }}\""
+        dest: "/etc/profile.d/dr-provision.sh"
+        mode: 0755
+  
+- name: Remove default rocketskates user if different api_user is set
+  hosts: group_digitalrebar
+  become: yes
+  tasks:
+    - shell: "drpcli users destroy rocketskates"
+      args:
+        removes: "/var/lib/dr-provision/digitalrebar/users/rocketskates.json"
+
+- name: Add drpcli autocomplete definitions
+  hosts: group_digitalrebar
+  become: yes
+  tasks:
+    - shell: "drpcli autocomplete /etc/bash_completion.d/drpcli"
+      args:
+        creates: "/etc/bash_completion.d/drpcli"
