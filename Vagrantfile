@@ -212,7 +212,7 @@ Vagrant.configure("2") do |config|
     digital_rebar.vm.boot_timeout = 600
 
     digital_rebar.vm.allowed_synced_folder_types = allowed_synced_folder_types
-    digital_rebar.vm.synced_folder ".", "/vagrant", type: "rsync", owner: vagrant_username, rsync__exclude: [".git", "*.box", "output-*", "set*.bat"]
+    digital_rebar.vm.synced_folder ".", "/vagrant", type: "rsync", owner: vagrant_username, rsync__exclude: [".git", "*.box", "output-*", "set*.bat", "dr-provision", ".vagrant"]
 
     digital_rebar.vm.communicator = 'ssh'
 
@@ -243,15 +243,14 @@ Vagrant.configure("2") do |config|
     digital_rebar.vm.provision "shell", inline: "apt-get -y install python-minimal", run: "always"
 
     digital_rebar.vm.provision :ansible do |ansible|	  
-      ansible.config_file = ansible_config_path
+      #ansible.config_file = ansible_config_path
       ansible.galaxy_role_file = ansible_galaxy_role_path
       ansible.galaxy_roles_path = ansible_galaxy_roles_path
       ansible.inventory_path = ansible_inventory_path
       ansible.playbook = ansible_playbook_path
       ansible.verbose = "vvv"
-      #ansible.sudo = false
-      ansible.raw_arguments  = "--user='#{vagrant_username}'"
-      ansible.raw_arguments  = "--private-key='#{config.ssh.private_key_path}'"
+      ansible.become = true
+      ansible.raw_arguments  = ["--user='#{vagrant_username}'", "--private-key='#{config.ssh.private_key_path}'", "--extra-vars='pipelining=True'"]
     end
   end
 

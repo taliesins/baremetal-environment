@@ -1,1 +1,4 @@
-- src: mrlesmithjr.digital-rebar
+- src: https://github.com/taliesins/ansible-role-dr-provision
+  name: stanchan.dr-provision
+- src: https://github.com/taliesins/switch-apt-mirror.ansible.role
+  name: switch-apt-mirror.ansible.role

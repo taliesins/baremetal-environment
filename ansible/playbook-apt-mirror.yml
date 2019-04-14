@@ -1,0 +1,9 @@
+---
+
+- name: Configure apt mirror for digital rebar admin node
+  hosts: group_digitalrebar
+  roles:
+    - switch-apt-mirror.ansible.role
+  vars:
+    ubuntu_apt_mirror: 'nexus.talifun.com/repository/ubuntu-bionic-proxy'
+    debian_apt_mirror: 'httpredir.debian.org'
