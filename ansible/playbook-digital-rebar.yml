@@ -5,8 +5,8 @@
   roles:
     - stanchan.dr-provision
   vars:
-    provision_release_tag: v3.13.1
-    provision_content_release_tag: v1.13.0
+    provision_release_tag: v3.13.5
+    provision_content_release_tag: v1.13.1
 
     provision_delete_default_user: yes
   
@@ -59,71 +59,85 @@
       defaultBootEnv: sledgehammer
       defaultStage: discover
 
+    provision_content_release:
+      - name: drp-community-content
+        override:
+          sections:
+            bootenvs:
+              discovery:
+                OS:
+                  SupportedArchitectures: 
+                    amd64:
+                      IsoFile: sledgehammer-c7305a9ba2c6b12351530c4a9021fd5e07ef1ce1.amd64.tar
+                      IsoUrl: http://nexus.talifun.com/repository/iso-hosted/sledgehammer-c7305a9ba2c6b12351530c4a9021fd5e07ef1ce1.amd64.tar
+                      IsoSha256: ''
+                    arm64:
+                      IsoFile: sledgehammer-9b5276ac5826520829aa73c149fe672fe2363656.arm64.tar
+                      IsoUrl: http://nexus.talifun.com/repository/iso-hosted/sledgehammer-9b5276ac5826520829aa73c149fe672fe2363656.arm64.tar       
+                      IsoSha256: '' 
+              sledgehammer:
+                OS:
+                  SupportedArchitectures: 
+                    amd64:
+                      IsoFile: sledgehammer-c7305a9ba2c6b12351530c4a9021fd5e07ef1ce1.amd64.tar
+                      IsoUrl: http://nexus.talifun.com/repository/iso-hosted/sledgehammer-c7305a9ba2c6b12351530c4a9021fd5e07ef1ce1.amd64.tar
+                      IsoSha256: ''
+                    arm64:
+                      IsoFile: sledgehammer-9b5276ac5826520829aa73c149fe672fe2363656.arm64.tar
+                      IsoUrl: http://nexus.talifun.com/repository/iso-hosted/sledgehammer-9b5276ac5826520829aa73c149fe672fe2363656.arm64.tar  
+                      IsoSha256: ''
+              centos-7-install:
+                OS:
+                  SupportedArchitectures: 
+                    aarch64:
+                      IsoFile: CentOS-7-aarch64-Minimal-1810.iso
+                      IsoUrl: http://nexus.talifun.com/repository/iso-hosted/CentOS-7-aarch64-Minimal-1810.iso
+                      IsoSha256: ''
+                    x86_64:
+                      IsoFile: CentOS-7-x86_64-Minimal-1810.iso
+                      IsoUrl: http://nexus.talifun.com/repository/iso-hosted/CentOS-7-x86_64-Minimal-1810.iso   
+                      IsoSha256: '' 
+              debian-9-install:
+                OS:
+                  IsoFile: debian-9-amd64-mini.iso
+                  IsoUrl: http://nexus.talifun.com/repository/iso-hosted/debian-9-amd64-mini.iso
+                  IsoSha256: ''
+              ubuntu-16.04-install:
+                OS:
+                  IsoFile: ubuntu-16.04.6-server-amd64.iso
+                  IsoUrl: http://nexus.talifun.com/repository/iso-hosted/ubuntu-16.04.6-server-amd64.iso
+                  IsoSha256: ''
+              ubuntu-18.04-install:
+                OS:
+                  SupportedArchitectures: 
+                    amd64:
+                      IsoFile: ubuntu-18.04.2-server-amd64.iso
+                      IsoUrl: http://nexus.talifun.com/repository/iso-hosted/ubuntu-18.04.2-server-amd64.iso
+                      IsoSha256: ''
+                    arm64:
+                      IsoFile: ubuntu-18.04.2-server-arm64.iso
+                      IsoUrl: http://nexus.talifun.com/repository/iso-hosted/ubuntu-18.04.2-server-arm64.iso   
+                      IsoSha256: ''  
+      - name: drp-community-contrib
+      - name: krib
+      - name: sledgehammer-builder
+
     provision_content_bootenvs:
       - Name: sledgehammer
         install_iso: no
-        OS:
-          SupportedArchitectures: 
-            amd64:
-              IsoFile: sledgehammer-c7305a9ba2c6b12351530c4a9021fd5e07ef1ce1.amd64.tar
-              IsoUrl: http://nexus.talifun.com/repository/iso-hosted/sledgehammer-c7305a9ba2c6b12351530c4a9021fd5e07ef1ce1.amd64.tar
-              IsoSha256: ''
-            arm64:
-              IsoFile: sledgehammer-9b5276ac5826520829aa73c149fe672fe2363656.arm64.tar
-              IsoUrl: http://nexus.talifun.com/repository/iso-hosted/sledgehammer-9b5276ac5826520829aa73c149fe672fe2363656.arm64.tar       
-              IsoSha256: ''                       
       - Name: discovery
         install_iso: no
-        OS:
-          SupportedArchitectures: 
-            amd64:
-              IsoFile: sledgehammer-c7305a9ba2c6b12351530c4a9021fd5e07ef1ce1.amd64.tar
-              IsoUrl: http://nexus.talifun.com/repository/iso-hosted/sledgehammer-c7305a9ba2c6b12351530c4a9021fd5e07ef1ce1.amd64.tar
-              IsoSha256: ''
-            arm64:
-              IsoFile: sledgehammer-9b5276ac5826520829aa73c149fe672fe2363656.arm64.tar
-              IsoUrl: http://nexus.talifun.com/repository/iso-hosted/sledgehammer-9b5276ac5826520829aa73c149fe672fe2363656.arm64.tar  
-              IsoSha256: ''
       - Name: centos-7-install
         install_iso: no
-        OS:
-          SupportedArchitectures: 
-            aarch64:
-              IsoFile: CentOS-7-aarch64-Minimal-1810.iso
-              IsoUrl: http://nexus.talifun.com/repository/iso-hosted/CentOS-7-aarch64-Minimal-1810.iso
-              IsoSha256: ''
-            x86_64:
-              IsoFile: CentOS-7-x86_64-Minimal-1810.iso
-              IsoUrl: http://nexus.talifun.com/repository/iso-hosted/CentOS-7-x86_64-Minimal-1810.iso   
-              IsoSha256: ''      
       - Name: debian-9-install
         install_iso: no
-        OS:
-          IsoFile: debian-9-amd64-mini.iso
-          IsoUrl: http://nexus.talifun.com/repository/iso-hosted/debian-9-amd64-mini.iso
-          IsoSha256: ''
       - Name: ubuntu-16.04-install
         install_iso: no
-        OS:
-          IsoFile: ubuntu-16.04.6-server-amd64.iso
-          IsoUrl: http://nexus.talifun.com/repository/iso-hosted/ubuntu-16.04.6-server-amd64.iso
-          IsoSha256: ''
       - Name: ubuntu-18.04-install
         install_iso: no
-        OS:
-          SupportedArchitectures: 
-            amd64:
-              IsoFile: ubuntu-18.04.2-server-amd64.iso
-              IsoUrl: http://nexus.talifun.com/repository/iso-hosted/ubuntu-18.04.2-server-amd64.iso
-              IsoSha256: ''
-            arm64:
-              IsoFile: ubuntu-18.04.2-server-arm64.iso
-              IsoUrl: http://nexus.talifun.com/repository/iso-hosted/ubuntu-18.04.2-server-arm64.iso   
-              IsoSha256: ''  
 
     provision_files_bootenvs_path: "{{ inventory_dir.split('/')[0:-2]|join('/') }}/dr-provision/bootenvs"
     provision_bootenvs_files: []
-
     provision_files_templates_path: "{{ inventory_dir.split('/')[0:-2]|join('/') }}/dr-provision/templates"
     provision_templates_files: []
 
