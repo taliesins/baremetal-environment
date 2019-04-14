@@ -96,7 +96,23 @@
                     x86_64:
                       IsoFile: CentOS-7-x86_64-Minimal-1810.iso
                       IsoUrl: http://nexus.talifun.com/repository/iso-hosted/CentOS-7-x86_64-Minimal-1810.iso   
-                      IsoSha256: '' 
+                      IsoSha256: ''
+              centos-7.6.1810-install:
+                OS:
+                  SupportedArchitectures: 
+                    aarch64:
+                      IsoFile: CentOS-7-aarch64-Minimal-1810.iso
+                      IsoUrl: http://nexus.talifun.com/repository/iso-hosted/CentOS-7-aarch64-Minimal-1810.iso
+                      IsoSha256: ''
+                    x86_64:
+                      IsoFile: CentOS-7-x86_64-Minimal-1810.iso
+                      IsoUrl: http://nexus.talifun.com/repository/iso-hosted/CentOS-7-x86_64-Minimal-1810.iso   
+                      IsoSha256: ''              
+              debian-8-install:
+                OS:
+                  IsoFile: debian-8-amd64-mini.iso
+                  IsoUrl: http://nexus.talifun.com/repository/iso-hosted/debian-8-amd64-mini.iso
+                  IsoSha256: ''                       
               debian-9-install:
                 OS:
                   IsoFile: debian-9-amd64-mini.iso
@@ -118,7 +134,44 @@
                       IsoFile: ubuntu-18.04.2-server-arm64.iso
                       IsoUrl: http://nexus.talifun.com/repository/iso-hosted/ubuntu-18.04.2-server-arm64.iso   
                       IsoSha256: ''  
+              ubuntu-18.04-arm64-hwe-install:
+                OS:
+                  SupportedArchitectures: 
+                    arm64:
+                      IsoFile: ubuntu-18.04.2-server-arm64.iso
+                      IsoUrl: http://nexus.talifun.com/repository/iso-hosted/ubuntu-18.04.2-server-arm64.iso
+                      IsoSha256: ''
       - name: drp-community-contrib
+        override:
+          sections:
+            bootenvs:
+              centos-6-install:
+                OS:
+                  IsoFile: CentOS-6.10-x86_64-bin-DVD1.iso
+                  IsoUrl: http://nexus.talifun.com/repository/iso-hosted/CentOS-6.10-x86_64-bin-DVD1.iso
+                  IsoSha256: ''
+              centos-6.10-install:
+                  IsoFile: CentOS-6.10-x86_64-bin-DVD1.iso
+                  IsoUrl: http://nexus.talifun.com/repository/iso-hosted/CentOS-6.10-x86_64-bin-DVD1.iso
+                  IsoSha256: ''
+              centos-6.9-install:   
+                  IsoFile: CentOS-6.9-x86_64-bin-DVD1.iso
+                  IsoUrl: http://nexus.talifun.com/repository/iso-hosted/CentOS-6.9-x86_64-bin-DVD1.iso
+                  IsoSha256: ''    
+              centos-7.3.1611-install:
+                  IsoFile: CentOS-7-x86_64-Minimal-1611.iso
+                  IsoUrl: http://nexus.talifun.com/repository/iso-hosted/CentOS-7-x86_64-Minimal-1611.iso
+                  IsoSha256: ''                                   
+              scientificlinux-6.8-install:
+                OS:
+                  IsoFile: SL-68-x86_64-2016-06-29-DVD-DL.iso
+                  IsoUrl: http://nexus.talifun.com/repository/iso-hosted/SL-68-x86_64-2016-06-29-DVD-DL.iso
+                  IsoSha256: '' 
+              ubuntu-14.04-install:
+                OS:
+                  IsoFile: ubuntu-14.04.5-server-amd64.iso
+                  IsoUrl: http://nexus.talifun.com/repository/iso-hosted/ubuntu-14.04.5-server-amd64.iso
+                  IsoSha256: ''        
       - name: krib
       - name: sledgehammer-builder
 
