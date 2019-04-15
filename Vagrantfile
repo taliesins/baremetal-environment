@@ -77,20 +77,30 @@ Vagrant.configure("2") do |config|
   vagrant_proxy_https = ENV['vagrant_proxy_https'] || 'http://192.168.0.2:3128/'
   vagrant_no_proxy = ENV['vagrant_no_proxy'] || 'localhost,127.0.0.1'
 
+  empty_box_name = "hyperv_empty"
+  empty_box_url = "hyperv_null.box"
   ubuntu_box_name = "ubuntu"
   ubuntu_box_url = "hyperv_ubuntu-18.04_baremetal.box"
 
   case "#{provider}"
   when 'vsphere'
+    empty_box_name = "vsphere_empty"
+    empty_box_url = "vsphere_empty.box"
     ubuntu_box_name = "vsphere_dummy"
     ubuntu_box_url = "./vsphere_dummy.box"
   when 'vmware'
+    empty_box_name = "vmware_empty"
+    empty_box_url = "vmware_empty.box"   
     ubuntu_box_name = "vmware_ubuntu-18.04_baremetal"
     ubuntu_box_url = "./vmware_ubuntu-18.04_baremetal.box"
   when 'virtualbox'
+    empty_box_name = "virtualbox_empty"
+    empty_box_url = "virtualbox_empty.box" 
     ubuntu_box_name = "virtualbox_ubuntu-18.04_baremetal"
     ubuntu_box_url = "./virtualbox_ubuntu-18.04_baremetal.box"
   when 'hyperv'
+    empty_box_name = "hyperv_empty"
+    empty_box_url = "hyperv_null.box"
     ubuntu_box_name = "ubuntu"
     ubuntu_box_url = "./hyperv_ubuntu-18.04_baremetal.box"
   else
@@ -252,6 +262,36 @@ Vagrant.configure("2") do |config|
       ansible.become = true
       ansible.raw_arguments  = ["--user='#{vagrant_username}'", "--private-key='#{config.ssh.private_key_path}'", "--extra-vars='pipelining=True'"]
     end
+  end
+
+  config.vm.define "worker" do |worker|
+    worker.vm.hostname = :nil
+    worker.vm.guest = :linux
+    worker.vm.box = empty_box_name
+    worker.vm.box_url = empty_box_url
+    worker.vm.boot_timeout = 600
+    worker.vm.communicator = 'ssh'
+    worker.ssh.insert_key = 'false'
+    worker.vm.synced_folder ".", "/vagrant", disabled: true
+
+    worker.vm.network :public_network, bridge: vagrant_lan_network, auto_config: false
+
+    worker.vm.provider "hyperv" do |v|
+      hyperv.vmname = worker.vm.hostname
+      hyperv.cpus = 4
+      hyperv.memory = 8192
+      hyperv.enable_virtualization_extensions = true
+      hyperv.auto_start_action = "StartIfRunning"
+      hyperv.auto_stop_action = "Save"
+      hyperv.vm_integration_services = {
+        guest_service_interface: true,
+        heartbeat: true,
+        key_value_pair_exchange: true,
+        shutdown: true,
+        time_synchronization: true,
+        vss: true
+      }
+    end      
   end
 
   after(hook_options)
