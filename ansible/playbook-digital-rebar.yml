@@ -208,7 +208,7 @@
         Enabled: true
         Errors: []
         Meta: {}
-        NextServer: ''
+        NextServer: '172.16.0.1'
         OnlyReservations: false
         Options:
         - Code: 3
